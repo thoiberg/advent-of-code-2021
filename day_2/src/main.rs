@@ -3,14 +3,12 @@ use std::str::FromStr;
 use strum_macros::EnumString;
 
 fn main() {
-    println!("Hello, world!");
+    let data = read_and_process_input().unwrap();
 
-    let data = read_and_process_input();
+    let part_one_answer = part_one_solution(&data);
+    println!("Part One Solution is: {}", part_one_answer);
 
-    // let part_one_answer = part_one_solution(&data.unwrap());
-    // println!("Part One Solution is: {}", part_one_answer);
-
-    let part_two_answer = part_two_solution(&data.unwrap());
+    let part_two_answer = part_two_solution(&data);
     println!("Part Two Solution is: {}", part_two_answer)
 }
 
