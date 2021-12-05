@@ -11,26 +11,22 @@ fn main() {
 }
 
 fn part_one_solution(data: &Vec<i32>) -> i32 {
-    check_depth_increased(None, &data, 0)
+    check_depth_increased(data.first().unwrap(), &data[1..].to_vec(), 0)
 }
 
-fn check_depth_increased(previous: Option<&i32>, data: &Vec<i32>, count: i32) -> i32 {
-    if previous.is_some() {
-        let current = data.first();
+fn check_depth_increased(previous: &i32, data: &Vec<i32>, count: i32) -> i32 {
+    let current = data.first();
 
-        match current {
-            Some(x) => {
-                let mut new_count = count;
-                if x > previous.unwrap() {
-                    new_count += 1;
-                }
-
-                return check_depth_increased(Some(x), &data[1..].to_vec(), new_count);
+    match current {
+        Some(x) => {
+            let mut new_count = count;
+            if x > previous {
+                new_count += 1;
             }
-            None => return count,
+
+            return check_depth_increased(x, &data[1..].to_vec(), new_count);
         }
-    } else {
-        return check_depth_increased(data.first(), &data[1..].to_vec(), count);
+        None => return count,
     }
 }
 
@@ -54,13 +50,14 @@ fn check_sliding_window(
 
     match current {
         Some(x) => {
-            let mut new_count = count;
             let sliding_count = x + first + second;
             let next_sliding_count = second + x + data.get(1).unwrap_or(&0);
 
-            if next_sliding_count > sliding_count {
-                new_count += 1;
-            }
+            let new_count = if next_sliding_count > sliding_count {
+                count + 1
+            } else {
+                count
+            };
 
             return check_sliding_window(second_prev, current, &data[1..].to_vec(), new_count);
         }
