@@ -45,55 +45,54 @@ impl Coordinate {
 
 fn part_one_solution(data: &Vec<Movement>) -> i32 {
     let start_point = Coordinate::new();
+    let final_coordinate = pilot_submarine(start_point, data, |coordinate, movement| {
+        let mut new_coordinate = coordinate;
 
-    let final_coordinate = pilot_submarine(start_point, data);
-
-    final_coordinate.horizontal * final_coordinate.depth
-}
-
-fn pilot_submarine(coordinate: Coordinate, movements: &Vec<Movement>) -> Coordinate {
-    let movement = movements.first();
-
-    match movement {
-        Some(x) => {
-            let mut new_coordinate = coordinate;
-
-            match x.direction {
-                Direction::Forward => new_coordinate.horizontal += x.distance,
-                Direction::Down => new_coordinate.depth += x.distance,
-                Direction::Up => new_coordinate.depth -= x.distance,
-            }
-
-            return pilot_submarine(new_coordinate, &movements[1..].to_vec());
+        match movement.direction {
+            Direction::Forward => new_coordinate.horizontal += movement.distance,
+            Direction::Down => new_coordinate.depth += movement.distance,
+            Direction::Up => new_coordinate.depth -= movement.distance,
         }
-        None => return coordinate,
-    }
+
+        return new_coordinate;
+    });
+
+    final_coordinate.depth * final_coordinate.horizontal
 }
 
 fn part_two_solution(data: &Vec<Movement>) -> i32 {
     let start_point = Coordinate::new();
 
-    let final_coordinate = pilot_and_aim(start_point, data);
+    let final_coordinate = pilot_submarine(start_point, data, |coordinate, movement| {
+        let mut new_coordinate = coordinate;
+
+        match movement.direction {
+            Direction::Forward => {
+                new_coordinate.horizontal += movement.distance;
+                new_coordinate.depth += new_coordinate.aim * movement.distance;
+            }
+            Direction::Down => new_coordinate.aim += movement.distance,
+            Direction::Up => new_coordinate.aim -= movement.distance,
+        }
+
+        new_coordinate
+    });
+
     final_coordinate.horizontal * final_coordinate.depth
 }
 
-fn pilot_and_aim(coordinate: Coordinate, movements: &Vec<Movement>) -> Coordinate {
+fn pilot_submarine(
+    coordinate: Coordinate,
+    movements: &Vec<Movement>,
+    move_submarine: impl Fn(Coordinate, &Movement) -> Coordinate,
+) -> Coordinate {
     let movement = movements.first();
 
     match movement {
         Some(x) => {
-            let mut new_coordinate = coordinate;
+            let next_coordinate = move_submarine(coordinate, x);
 
-            match x.direction {
-                Direction::Forward => {
-                    new_coordinate.horizontal += x.distance;
-                    new_coordinate.depth += new_coordinate.aim * x.distance;
-                }
-                Direction::Down => new_coordinate.aim += x.distance,
-                Direction::Up => new_coordinate.aim -= x.distance,
-            }
-
-            return pilot_and_aim(new_coordinate, &movements[1..].to_vec());
+            return pilot_submarine(next_coordinate, &movements[1..].to_vec(), move_submarine);
         }
         None => return coordinate,
     }
