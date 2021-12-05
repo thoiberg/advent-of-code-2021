@@ -12,7 +12,7 @@ fn main() {
     println!("Part Two Solution is: {}", part_two_answer)
 }
 
-#[derive(Debug, PartialEq, EnumString, Clone)]
+#[derive(EnumString, Clone)]
 enum Direction {
     #[strum(serialize = "forward")]
     Forward,
@@ -30,18 +30,21 @@ struct Movement {
     distance: i32,
 }
 
+#[derive(Default)]
 struct Coordinate {
     horizontal: i32,
     depth: i32,
     aim: i32,
 }
 
+impl Coordinate {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
 fn part_one_solution(data: &Vec<Movement>) -> i32 {
-    let start_point = Coordinate {
-        horizontal: 0,
-        depth: 0,
-        aim: 0,
-    };
+    let start_point = Coordinate::new();
 
     let final_coordinate = pilot_submarine(start_point, data);
 
@@ -68,11 +71,7 @@ fn pilot_submarine(coordinate: Coordinate, movements: &Vec<Movement>) -> Coordin
 }
 
 fn part_two_solution(data: &Vec<Movement>) -> i32 {
-    let start_point = Coordinate {
-        horizontal: 0,
-        depth: 0,
-        aim: 0,
-    };
+    let start_point = Coordinate::new();
 
     let final_coordinate = pilot_and_aim(start_point, data);
     final_coordinate.horizontal * final_coordinate.depth
