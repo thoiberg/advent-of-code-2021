@@ -1,7 +1,6 @@
 use std::io::Error as ioError;
 
 fn main() {
-    // read the data into an vec of numbers
     let data = read_and_process_input().unwrap();
 
     let first_solution = part_one_solution(&data);
@@ -12,14 +11,10 @@ fn main() {
 }
 
 fn part_one_solution(data: &Vec<i32>) -> i32 {
-    // recursive method that takes a count var, the current var, and the previous one
-    // if current is higher than the previous, increase the count and call the next iteration:
-    // current var becomes previous, count is passed in as is, current becomes the next value
-    // return the value once the current var is nothing
-    check_depth(None, &data, 0)
+    check_depth_increased(None, &data, 0)
 }
 
-fn check_depth(previous: Option<&i32>, data: &Vec<i32>, count: i32) -> i32 {
+fn check_depth_increased(previous: Option<&i32>, data: &Vec<i32>, count: i32) -> i32 {
     if previous.is_some() {
         let current = data.first();
 
@@ -30,23 +25,23 @@ fn check_depth(previous: Option<&i32>, data: &Vec<i32>, count: i32) -> i32 {
                     new_count += 1;
                 }
 
-                return check_depth(Some(x), &data[1..].to_vec(), new_count);
+                return check_depth_increased(Some(x), &data[1..].to_vec(), new_count);
             }
             None => return count,
         }
     } else {
-        return check_depth(data.first(), &data[1..].to_vec(), count);
+        return check_depth_increased(data.first(), &data[1..].to_vec(), count);
     }
 }
 
 fn part_two_solution(data: &Vec<i32>) -> i32 {
-    let first = data.get(0).unwrap();
-    let second = data.get(1).unwrap();
+    let first = data.get(0);
+    let second = data.get(1);
 
-    check_depth_again(Some(first), Some(second), &data[2..].to_vec(), 0)
+    check_sliding_window(first, second, &data[2..].to_vec(), 0)
 }
 
-fn check_depth_again(
+fn check_sliding_window(
     first_prev: Option<&i32>,
     second_prev: Option<&i32>,
     data: &Vec<i32>,
@@ -67,7 +62,7 @@ fn check_depth_again(
                 new_count += 1;
             }
 
-            return check_depth_again(second_prev, current, &data[1..].to_vec(), new_count);
+            return check_sliding_window(second_prev, current, &data[1..].to_vec(), new_count);
         }
         None => return count,
     }
@@ -107,5 +102,13 @@ mod tests {
         let increase_count = part_two_solution(&data);
 
         assert_eq!(increase_count, 5);
+    }
+
+    #[test]
+    fn test_part_two_solution() {
+        let data = read_and_process_input().unwrap();
+        let increase_count = part_two_solution(&data);
+
+        assert_eq!(increase_count, 1627);
     }
 }
