@@ -45,17 +45,23 @@ impl Coordinate {
 
 fn part_one_solution(data: &Vec<Movement>) -> i32 {
     let start_point = Coordinate::new();
-    let final_coordinate = pilot_submarine(start_point, data, |coordinate, movement| {
-        let mut new_coordinate = coordinate;
-
-        match movement.direction {
-            Direction::Forward => new_coordinate.horizontal += movement.distance,
-            Direction::Down => new_coordinate.depth += movement.distance,
-            Direction::Up => new_coordinate.depth -= movement.distance,
-        }
-
-        return new_coordinate;
-    });
+    let final_coordinate =
+        pilot_submarine(start_point, data, |coordinate, movement| {
+            match movement.direction {
+                Direction::Forward => Coordinate {
+                    horizontal: coordinate.horizontal + movement.distance,
+                    ..coordinate
+                },
+                Direction::Down => Coordinate {
+                    depth: coordinate.depth + movement.distance,
+                    ..coordinate
+                },
+                Direction::Up => Coordinate {
+                    depth: coordinate.depth - movement.distance,
+                    ..coordinate
+                },
+            }
+        });
 
     final_coordinate.depth * final_coordinate.horizontal
 }
@@ -63,20 +69,24 @@ fn part_one_solution(data: &Vec<Movement>) -> i32 {
 fn part_two_solution(data: &Vec<Movement>) -> i32 {
     let start_point = Coordinate::new();
 
-    let final_coordinate = pilot_submarine(start_point, data, |coordinate, movement| {
-        let mut new_coordinate = coordinate;
-
-        match movement.direction {
-            Direction::Forward => {
-                new_coordinate.horizontal += movement.distance;
-                new_coordinate.depth += new_coordinate.aim * movement.distance;
+    let final_coordinate =
+        pilot_submarine(start_point, data, |coordinate, movement| {
+            match movement.direction {
+                Direction::Forward => Coordinate {
+                    horizontal: coordinate.horizontal + movement.distance,
+                    depth: coordinate.depth + (coordinate.aim * movement.distance),
+                    ..coordinate
+                },
+                Direction::Down => Coordinate {
+                    aim: coordinate.aim + movement.distance,
+                    ..coordinate
+                },
+                Direction::Up => Coordinate {
+                    aim: coordinate.aim - movement.distance,
+                    ..coordinate
+                },
             }
-            Direction::Down => new_coordinate.aim += movement.distance,
-            Direction::Up => new_coordinate.aim -= movement.distance,
-        }
-
-        new_coordinate
-    });
+        });
 
     final_coordinate.horizontal * final_coordinate.depth
 }
