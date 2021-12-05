@@ -1,8 +1,6 @@
 use std::io::Error as ioError;
 
 fn main() {
-    println!("Hello, world!");
-
     // read the data into an vec of numbers
     let data = read_and_process_input().unwrap();
 
@@ -52,10 +50,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part_one_solution() {
+    fn test_part_one_sample() {
         let data = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
         let decrease_count = part_one_solution(&data);
 
         assert_eq!(decrease_count, 7);
+    }
+
+    #[test]
+    fn test_part_one_solution() {
+        let data = read_and_process_input().unwrap();
+        let decrease_count = part_one_solution(&data);
+
+        assert_eq!(decrease_count, 1583);
     }
 }
