@@ -103,14 +103,16 @@ fn read_and_process_input() -> Result<Vec<Movement>, ioError> {
     let contents = include_str!("input_data");
     Ok(contents
         .split('\n')
-        .map(|val| {
-            let instructions: Vec<&str> = val.split(' ').collect();
-            Movement {
-                direction: Direction::from_str(instructions[0]).unwrap(),
-                distance: instructions[1].parse::<i32>().unwrap(),
-            }
-        })
+        .map(|val| convert_to_movement(val))
         .collect())
+}
+
+fn convert_to_movement(instruction: &str) -> Movement {
+    let instructions: Vec<&str> = instruction.split(' ').collect();
+    Movement {
+        direction: Direction::from_str(instructions[0]).unwrap(),
+        distance: instructions[1].parse::<i32>().unwrap(),
+    }
 }
 
 #[cfg(test)]
@@ -118,32 +120,19 @@ mod tests {
     use super::*;
 
     fn test_data() -> Vec<Movement> {
-        vec![
-            Movement {
-                direction: Direction::from_str("forward").unwrap(),
-                distance: 5,
-            },
-            Movement {
-                direction: Direction::from_str("down").unwrap(),
-                distance: 5,
-            },
-            Movement {
-                direction: Direction::from_str("forward").unwrap(),
-                distance: 8,
-            },
-            Movement {
-                direction: Direction::from_str("up").unwrap(),
-                distance: 3,
-            },
-            Movement {
-                direction: Direction::from_str("down").unwrap(),
-                distance: 8,
-            },
-            Movement {
-                direction: Direction::from_str("forward").unwrap(),
-                distance: 2,
-            },
-        ]
+        let instructions = vec![
+            "forward 5",
+            "down 5",
+            "forward 8",
+            "up 3",
+            "down 8",
+            "forward 2",
+        ];
+
+        instructions
+            .into_iter()
+            .map(|instruction| convert_to_movement(instruction))
+            .collect()
     }
 
     #[test]
