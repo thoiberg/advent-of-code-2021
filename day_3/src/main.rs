@@ -135,4 +135,11 @@ mod tests {
     fn test_part_two_example() {
         assert_eq!(part_two_solution(&test_data()), 230);
     }
+
+    #[test]
+    fn test_part_two_solution() {
+        let data = read_and_process_input().unwrap();
+
+        assert_eq!(part_two_solution(&data), 4550283);
+    }
 }
