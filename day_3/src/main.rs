@@ -5,6 +5,9 @@ fn main() {
 
     let part_one_answer = part_one_solution(&data);
     println!("Part One Solution is: {}", part_one_answer);
+
+    let part_two_answer = part_two_solution(&data);
+    println!("Part Two Solution is : {}", part_two_answer)
 }
 
 fn part_one_solution(data: &Vec<String>) -> isize {
@@ -37,8 +40,65 @@ fn part_one_solution(data: &Vec<String>) -> isize {
 
     let epsilon_digit = isize::from_str_radix(epsilon.join("").as_str(), 2).unwrap();
     let gamma_digit = isize::from_str_radix(gamma.join("").as_str(), 2).unwrap();
-    // multiply together to get the result
     gamma_digit * epsilon_digit
+}
+
+fn part_two_solution(data: &Vec<String>) -> isize {
+    let oxygen_generator_string = determine_life_support_rating(data, 0, |ones, zeroes| {
+        if ones.len() >= zeroes.len() {
+            // TODO: Figure out lifetime signature so I don't have to clone the winner
+            return ones.to_vec();
+        } else {
+            return zeroes.to_vec();
+        }
+    });
+
+    let co2_scrubber_string = determine_life_support_rating(data, 0, |ones, zeroes| {
+        if zeroes.len() <= ones.len() {
+            // TODO: Figure out lifetime signature so I don't have to clone the winner
+            return zeroes.to_vec();
+        } else {
+            return ones.to_vec();
+        }
+    });
+
+    let oxygen_generator_rating =
+        isize::from_str_radix(oxygen_generator_string.as_str(), 2).unwrap();
+    let co2_scrubber_rating = isize::from_str_radix(co2_scrubber_string.as_str(), 2).unwrap();
+
+    oxygen_generator_rating * co2_scrubber_rating
+}
+
+fn determine_life_support_rating(
+    data: &Vec<String>,
+    search_index: usize,
+    data_filter: impl Fn(&Vec<String>, &Vec<String>) -> Vec<String>,
+) -> String {
+    match data.len() {
+        0 => panic!("No data entries found, something went wrong"),
+        1 => return data.first().unwrap().to_string(),
+        _ => {
+            let mut ones: Vec<String> = vec![];
+            let mut zeroes: Vec<String> = vec![];
+
+            // TODO: remove unnecessary tuple intermediate value
+            for binary_tuple in data.iter().enumerate() {
+                let binary_string = binary_tuple.1;
+                let chars: Vec<char> = binary_string.chars().collect();
+                let char = chars[search_index];
+
+                if char == '1' {
+                    ones.push(binary_string.to_string());
+                } else {
+                    zeroes.push(binary_string.to_string());
+                }
+            }
+
+            let filtered_data = data_filter(&ones, &zeroes);
+
+            return determine_life_support_rating(&filtered_data, search_index + 1, data_filter);
+        }
+    }
 }
 
 fn read_and_process_input() -> Result<Vec<String>, ioError> {
@@ -50,16 +110,18 @@ fn read_and_process_input() -> Result<Vec<String>, ioError> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part_one_example() {
+    fn test_data() -> Vec<String> {
         let data = vec![
             "00100", "11110", "10110", "10111", "10101", "01111", "00111", "11100", "10000",
             "11001", "00010", "01010",
         ];
 
-        let test_data = data.into_iter().map(|x| String::from(x)).collect();
+        data.into_iter().map(|x| String::from(x)).collect()
+    }
 
-        assert_eq!(part_one_solution(&test_data), 198);
+    #[test]
+    fn test_part_one_example() {
+        assert_eq!(part_one_solution(&test_data()), 198);
     }
 
     #[test]
@@ -67,5 +129,10 @@ mod tests {
         let data = read_and_process_input().unwrap();
 
         assert_eq!(part_one_solution(&data), 3633500);
+    }
+
+    #[test]
+    fn test_part_two_example() {
+        assert_eq!(part_two_solution(&test_data()), 230);
     }
 }
