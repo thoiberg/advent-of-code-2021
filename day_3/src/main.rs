@@ -78,8 +78,8 @@ fn determine_life_support_rating(
             let mut zeroes: Vec<String> = vec![];
 
             // TODO: remove unnecessary tuple intermediate value
-            for binary_tuple in data.iter().enumerate() {
-                let binary_string = binary_tuple.1;
+            for binary_string in data {
+                // let binary_string = binary_tuple.1;
                 let chars: Vec<char> = binary_string.chars().collect();
                 // assuming that we will always find a definite string before finishing the entire value
                 let char = chars[search_index];
