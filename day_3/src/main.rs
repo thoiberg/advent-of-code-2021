@@ -31,15 +31,13 @@ fn part_one_solution(data: &Vec<String>) -> isize {
         gamma.push(value)
     }
 
-    // TODO: look into whether there's a simpler way to invert a binary (I'm assuming there is)
-    let epsilon: Vec<&str> = gamma
-        .clone()
-        .into_iter()
-        .map(|val| if val == "0" { "1" } else { "0" })
-        .collect();
-
-    let epsilon_digit = isize::from_str_radix(epsilon.join("").as_str(), 2).unwrap();
     let gamma_digit = isize::from_str_radix(gamma.join("").as_str(), 2).unwrap();
+
+    // invert a binary, adopted from https://stackoverflow.com/questions/4338315/inverting-a-binary-value-of-a-number
+    let base: isize = 2;
+    let mask = base.pow(gamma.len().try_into().unwrap()) - 1;
+    let epsilon_digit = gamma_digit ^ mask;
+
     gamma_digit * epsilon_digit
 }
 
