@@ -46,19 +46,17 @@ fn part_one_solution(data: &Vec<String>) -> isize {
 fn part_two_solution(data: &Vec<String>) -> isize {
     let oxygen_generator_string = determine_life_support_rating(data, 0, |ones, zeroes| {
         if ones.len() >= zeroes.len() {
-            // TODO: Figure out lifetime signature so I don't have to clone the winner
-            return ones.to_vec();
+            return ones;
         } else {
-            return zeroes.to_vec();
+            return zeroes;
         }
     });
 
     let co2_scrubber_string = determine_life_support_rating(data, 0, |ones, zeroes| {
         if zeroes.len() <= ones.len() {
-            // TODO: Figure out lifetime signature so I don't have to clone the winner
-            return zeroes.to_vec();
+            return zeroes;
         } else {
-            return ones.to_vec();
+            return ones;
         }
     });
 
@@ -72,7 +70,7 @@ fn part_two_solution(data: &Vec<String>) -> isize {
 fn determine_life_support_rating(
     data: &Vec<String>,
     search_index: usize,
-    data_filter: impl Fn(&Vec<String>, &Vec<String>) -> Vec<String>,
+    data_filter: impl Fn(Vec<String>, Vec<String>) -> Vec<String>,
 ) -> String {
     match data.len() {
         0 => panic!("No data entries found, something went wrong"),
@@ -85,6 +83,7 @@ fn determine_life_support_rating(
             for binary_tuple in data.iter().enumerate() {
                 let binary_string = binary_tuple.1;
                 let chars: Vec<char> = binary_string.chars().collect();
+                // assuming that we will always find a definite string before finishing the entire value
                 let char = chars[search_index];
 
                 if char == '1' {
@@ -94,7 +93,7 @@ fn determine_life_support_rating(
                 }
             }
 
-            let filtered_data = data_filter(&ones, &zeroes);
+            let filtered_data = data_filter(ones, zeroes);
 
             return determine_life_support_rating(&filtered_data, search_index + 1, data_filter);
         }
