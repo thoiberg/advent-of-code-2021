@@ -4,6 +4,10 @@ fn main() {
     let part_one_answer = part_one_solution(data.0, &data.1);
 
     println!("Part One Solution is: {}", part_one_answer);
+
+    let part_two_answer = part_two_solution(data.0, &data.1);
+
+    println!("Part Two Solution is: {}", part_two_answer);
 }
 
 fn part_one_solution(bingo_calls: &'static str, boards: &Vec<BingoBoard>) -> i32 {
@@ -27,6 +31,15 @@ fn part_one_solution(bingo_calls: &'static str, boards: &Vec<BingoBoard>) -> i32
     }
 
     answer
+}
+
+fn part_two_solution(bingo_calls: &'static str, boards: &Vec<BingoBoard>) -> i32 {
+    // same as part one, but when a board wins, we take it out of the running
+    // the last board to win is the winner
+    // if i just look for the last winning board when I finish I'll find all the boards that have
+    // already won, which is not useful
+
+    0
 }
 
 fn read_and_process_input() -> (&'static str, Vec<BingoBoard>) {
