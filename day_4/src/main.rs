@@ -1,17 +1,157 @@
-// process input
-//   first line is the bingo call, separate that into it's own vector
-// the rest should be:
-//   separated by double newline (\n\n)
-//     separated by \n
-//     whitespace trimmed
-//     separated by whitespace (can be one or multiple spaces)
-//   passed into a BingoBoard constructor
-//     converts them into BingoSpaces and constructs a Vec of Vecs
-//     has a `mark` method that takes a number, iterates through the entire board and flip the BingoSpace bit
-//     has a `bingo` method that checks every vertical and horizontal line to see if they all match
-//     has a `unused_spaces` method that returns a vec of all un-marked spaced
-//  main calls the unused_spaces on the board, multiples it by the winning number and then returns
-
 fn main() {
-    println!("Hello, world!");
+    let data = read_and_process_input();
+
+    let part_one_answer = part_one_solution(data.0, &data.1);
+
+    println!("Part One Solution is: {}", part_one_answer);
+}
+
+fn part_one_solution(bingo_calls: &'static str, boards: &Vec<BingoBoard>) -> i32 {
+    let calls: Vec<&str> = bingo_calls.trim().split(",").collect();
+    let mut answer = 0;
+    let mut mut_boards = boards.to_owned();
+
+    for call in calls {
+        let call_int = call.parse::<i32>().unwrap();
+        for board in &mut mut_boards {
+            let winner = board.mark(call_int);
+
+            if winner.to_owned() {
+                answer = board.unused_spaces() * call_int
+            }
+        }
+
+        if answer > 0 {
+            return answer;
+        }
+    }
+
+    answer
+}
+
+fn read_and_process_input() -> (&'static str, Vec<BingoBoard>) {
+    process_input(read())
+}
+
+fn read() -> &'static str {
+    include_str!("../data/puzzle_data")
+}
+
+fn process_input(data: &'static str) -> (&'static str, Vec<BingoBoard>) {
+    let mut input_data: Vec<&str> = data.split("\n\n").collect();
+
+    let bingo_call = input_data.remove(0);
+
+    let boards: Vec<BingoBoard> = input_data
+        .into_iter()
+        .map(|beep| BingoBoard::new(beep))
+        .collect();
+
+    (bingo_call, boards)
+}
+
+#[derive(Clone, Debug)]
+struct BingoBoard {
+    bingo_spaces: Vec<Vec<BingoSpace>>,
+}
+
+impl BingoBoard {
+    fn new(board_layout: &str) -> BingoBoard {
+        let rows: Vec<&str> = board_layout.split("\n").collect();
+
+        let board_spaces: Vec<Vec<BingoSpace>> = rows
+            .into_iter()
+            .map(|row| {
+                let spaces: Vec<&str> = row.trim().split(" ").filter(|x| x.len() > 0).collect();
+
+                let bingo_spaces: Vec<BingoSpace> = spaces
+                    .into_iter()
+                    .map(|space| BingoSpace {
+                        value: space.trim().parse::<i32>().unwrap(),
+                        marked: false,
+                    })
+                    .collect();
+
+                bingo_spaces
+            })
+            .collect();
+
+        BingoBoard {
+            bingo_spaces: board_spaces,
+        }
+    }
+
+    fn mark(&mut self, number: i32) -> bool {
+        for row in &mut self.bingo_spaces {
+            for mut space in row {
+                if space.value == number {
+                    space.marked = true;
+                }
+            }
+        }
+        // if all in row are true then return true
+        let won = &self
+            .bingo_spaces
+            .to_vec()
+            .into_iter()
+            .any(|row| row.into_iter().all(|space| space.marked));
+
+        // if all in column are true then return true
+        let row_length = self.bingo_spaces.first().unwrap().len();
+        let column_win = (0..(row_length - 1)).into_iter().any(|column| {
+            let val = &self
+                .bingo_spaces
+                .to_vec()
+                .into_iter()
+                .all(|row| row[column].marked);
+
+            return val.to_owned();
+        });
+
+        won.to_owned() || column_win.to_owned()
+    }
+
+    fn unused_spaces(&self) -> i32 {
+        let sum = &self
+            .bingo_spaces
+            .to_vec()
+            .into_iter()
+            .flatten()
+            .fold(
+                0,
+                |acc, space| if space.marked { acc } else { acc + space.value },
+            );
+
+        *sum
+    }
+}
+
+#[derive(Clone, Debug)]
+struct BingoSpace {
+    value: i32,
+    marked: bool,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_data() -> (&'static str, Vec<BingoBoard>) {
+        let data = include_str!("../data/test_data");
+
+        process_input(data)
+    }
+
+    #[test]
+    fn test_part_one_example() {
+        let data = test_data();
+        assert_eq!(part_one_solution(data.0, &data.1), 4512);
+    }
+
+    #[test]
+    fn test_part_one_solution() {
+        let data = read_and_process_input();
+
+        assert_eq!(part_one_solution(data.0, &data.1), 44736);
+    }
 }
