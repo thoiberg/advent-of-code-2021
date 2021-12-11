@@ -44,7 +44,7 @@ fn process_input(data: &'static str) -> (&'static str, Vec<BingoBoard>) {
 
     let boards: Vec<BingoBoard> = input_data
         .into_iter()
-        .map(|beep| BingoBoard::new(beep))
+        .map(|board_layout| BingoBoard::new(board_layout))
         .collect();
 
     (bingo_call, boards)
@@ -89,14 +89,15 @@ impl BingoBoard {
                 }
             }
         }
-        // if all in row are true then return true
-        let won = &self
+
+        // TODO: Remove .to_vec() (I should be able to do this without having to take ownership??)
+        let row_win = &self
             .bingo_spaces
             .to_vec()
             .into_iter()
             .any(|row| row.into_iter().all(|space| space.marked));
 
-        // if all in column are true then return true
+        // TODO: Remove .to_vec() (I should be able to do this without having to take ownership??)
         let row_length = self.bingo_spaces.first().unwrap().len();
         let column_win = (0..(row_length - 1)).into_iter().any(|column| {
             let val = &self
@@ -108,7 +109,7 @@ impl BingoBoard {
             return val.to_owned();
         });
 
-        won.to_owned() || column_win.to_owned()
+        row_win.to_owned() || column_win.to_owned()
     }
 
     fn unused_spaces(&self) -> i32 {
