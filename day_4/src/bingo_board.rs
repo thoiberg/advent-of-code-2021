@@ -38,6 +38,10 @@ impl BingoBoard {
             }
         }
 
+        self.check()
+    }
+
+    pub fn check(&self) -> bool {
         // TODO: Remove .to_vec() (I should be able to do this without having to take ownership??)
         let row_win = &self
             .bingo_spaces
