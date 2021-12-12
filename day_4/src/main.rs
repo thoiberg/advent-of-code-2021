@@ -20,9 +20,10 @@ fn part_one_solution(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> i32 {
         let mut mut_boards = boards.to_owned();
 
         for board in &mut mut_boards {
-            let winner = board.mark(call);
+            board.mark(call);
+            let is_winner = board.check();
 
-            if winner.to_owned() {
+            if is_winner {
                 return (board.to_owned(), call);
             }
         }
@@ -55,9 +56,10 @@ fn part_two_solution(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> i32 {
         let mut active_boards: Vec<BingoBoard> = vec![];
 
         for board in &mut mut_boards {
-            let winner = board.mark(call);
+            board.mark(call);
+            let is_winner = board.check();
 
-            if winner.to_owned() {
+            if is_winner {
                 most_recent_winner = Some(board.to_owned());
                 most_recent_call = Some(call);
             } else {

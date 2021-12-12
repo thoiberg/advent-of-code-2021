@@ -29,7 +29,7 @@ impl BingoBoard {
         }
     }
 
-    pub fn mark(&mut self, number: i32) -> bool {
+    pub fn mark(&mut self, number: i32) {
         for row in &mut self.bingo_spaces {
             for mut space in row {
                 if space.value == number {
@@ -37,8 +37,6 @@ impl BingoBoard {
                 }
             }
         }
-
-        self.check()
     }
 
     pub fn check(&self) -> bool {
