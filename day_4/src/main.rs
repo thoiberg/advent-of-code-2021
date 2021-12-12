@@ -36,12 +36,46 @@ fn part_one_solution(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> i32 {
 }
 
 fn part_two_solution(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> i32 {
-    // same as part one, but when a board wins, we take it out of the running
-    // the last board to win is the winner
-    // if i just look for the last winning board when I finish I'll find all the boards that have
-    // already won, which is not useful
+    fn process_call(
+        bingo_calls: &Vec<i32>,
+        boards: &Vec<BingoBoard>,
+        recent_call: Option<i32>,
+        recent_winner: Option<BingoBoard>,
+    ) -> (BingoBoard, i32) {
+        // if we've finished with all the bingo numbers or we have no more boards left
+        // then we've found the last winning board
+        if bingo_calls.len() == 0 || boards.len() == 0 {
+            return (recent_winner.unwrap(), recent_call.unwrap());
+        }
 
-    0
+        let call = bingo_calls.first().unwrap().to_owned();
+        let mut mut_boards = boards.to_owned();
+        let mut most_recent_winner: Option<BingoBoard> = None;
+        let mut most_recent_call: Option<i32> = None;
+        let mut active_boards: Vec<BingoBoard> = vec![];
+
+        for board in &mut mut_boards {
+            let winner = board.mark(call);
+
+            if winner.to_owned() {
+                most_recent_winner = Some(board.to_owned());
+                most_recent_call = Some(call);
+            } else {
+                active_boards.push(board.to_owned());
+            }
+        }
+
+        return process_call(
+            &bingo_calls[1..].to_vec(),
+            &active_boards,
+            most_recent_call,
+            most_recent_winner,
+        );
+    }
+
+    let (winning_board, last_call) = process_call(bingo_calls, boards, None, None);
+
+    winning_board.unused_spaces() * last_call
 }
 
 fn read_and_process_input() -> (Vec<i32>, Vec<BingoBoard>) {
@@ -99,5 +133,12 @@ mod tests {
         let data = test_data();
 
         assert_eq!(part_two_solution(&data.0, &data.1), 1924);
+    }
+
+    #[test]
+    fn test_part_two_solution() {
+        let data = read_and_process_input();
+
+        assert_eq!(part_two_solution(&data.0, &data.1), 1827);
     }
 }
