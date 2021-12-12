@@ -14,6 +14,8 @@ fn main() {
     println!("Part Two Solution is: {}", part_two_answer);
 }
 
+type BingoGame = (Vec<i32>, Vec<BingoBoard>);
+
 fn part_one_solution(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> i32 {
     fn process_call(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> (BingoBoard, i32) {
         let call = bingo_calls.first().unwrap().to_owned();
@@ -80,7 +82,7 @@ fn part_two_solution(bingo_calls: &Vec<i32>, boards: &Vec<BingoBoard>) -> i32 {
     winning_board.unused_spaces() * last_call
 }
 
-fn read_and_process_input() -> (Vec<i32>, Vec<BingoBoard>) {
+fn read_and_process_input() -> BingoGame {
     process_input(read())
 }
 
@@ -88,7 +90,7 @@ fn read() -> &'static str {
     include_str!("../data/puzzle_data")
 }
 
-fn process_input(data: &'static str) -> (Vec<i32>, Vec<BingoBoard>) {
+fn process_input(data: &'static str) -> BingoGame {
     let mut input_data: Vec<&str> = data.split("\n\n").collect();
 
     let call_string = input_data.remove(0);
@@ -111,7 +113,7 @@ fn process_input(data: &'static str) -> (Vec<i32>, Vec<BingoBoard>) {
 mod tests {
     use super::*;
 
-    fn test_data() -> (Vec<i32>, Vec<BingoBoard>) {
+    fn test_data() -> BingoGame {
         let data = include_str!("../data/test_data");
 
         process_input(data)
