@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 pub struct Point {
     pub x: u32,
@@ -32,12 +32,12 @@ impl Line {
 
     pub fn each_point(&self) -> Box<dyn Iterator<Item = Point> + '_> {
         if self.is_horizontal() {
-            let range: Range<u32>;
+            let range: RangeInclusive<u32>;
 
             if self.start.y < self.end.y {
-                range = self.start.y..(self.end.y + 1);
+                range = RangeInclusive::new(self.start.y, self.end.y);
             } else {
-                range = self.end.y..(self.start.y + 1);
+                range = RangeInclusive::new(self.end.y, self.start.y);
             }
 
             Box::new(range.into_iter().map(|value| Point {
@@ -45,12 +45,12 @@ impl Line {
                 y: value,
             }))
         } else {
-            let range: Range<u32>;
+            let range: RangeInclusive<u32>;
 
             if self.start.x < self.end.x {
-                range = self.start.x..(self.end.x + 1);
+                range = RangeInclusive::new(self.start.x, self.end.x);
             } else {
-                range = self.end.x..(self.start.x + 1);
+                range = RangeInclusive::new(self.end.x, self.start.x);
             }
 
             Box::new(range.into_iter().map(|value| Point {

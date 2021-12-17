@@ -11,12 +11,6 @@ fn main() {
     println!("Part One Solution is: {}", part_one_answer);
 }
 
-// process data
-// discard any that aren't horizontal or vertical
-// loop through the rest and create hash of points (combine the x+y into a single variable) (or check out nd_array????)
-//   then increment the variable
-// loop through all final fields and count the fields that have 2 or more lines
-
 fn part_one_solution(lines: &Vec<Line>) -> u32 {
     let valid_lines: Vec<&Line> = lines
         .into_iter()
