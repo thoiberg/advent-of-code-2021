@@ -1,5 +1,8 @@
 use std::collections::HashMap;
-use std::ops::Range;
+
+mod line;
+
+use line::*;
 
 fn main() {
     let lines = process_input(read_input());
@@ -40,67 +43,6 @@ fn part_one_solution(lines: &Vec<Line>) -> u32 {
     position_hash
         .into_iter()
         .fold(0, |acc, (_, value)| if value > 1 { acc + 1 } else { acc })
-}
-
-struct Point {
-    x: u32,
-    y: u32,
-}
-
-impl Point {
-    pub fn new(coordinates: &str) -> Point {
-        let coords: Vec<&str> = coordinates.split(",").collect();
-
-        Point {
-            x: coords[0].parse::<u32>().unwrap(),
-            y: coords[1].parse::<u32>().unwrap(),
-        }
-    }
-}
-
-struct Line {
-    start: Point,
-    end: Point,
-}
-
-impl Line {
-    fn is_horizontal(&self) -> bool {
-        self.start.x == self.end.x
-    }
-
-    fn is_vertical(&self) -> bool {
-        self.start.y == self.end.y
-    }
-
-    fn each_point(&self) -> Box<dyn Iterator<Item = Point> + '_> {
-        if self.is_horizontal() {
-            let range: Range<u32>;
-
-            if self.start.y < self.end.y {
-                range = self.start.y..(self.end.y + 1);
-            } else {
-                range = self.end.y..(self.start.y + 1);
-            }
-
-            Box::new(range.into_iter().map(|value| Point {
-                x: self.start.x,
-                y: value,
-            }))
-        } else {
-            let range: Range<u32>;
-
-            if self.start.x < self.end.x {
-                range = self.start.x..(self.end.x + 1);
-            } else {
-                range = self.end.x..(self.start.x + 1);
-            }
-
-            Box::new(range.into_iter().map(|value| Point {
-                x: value,
-                y: self.start.y,
-            }))
-        }
-    }
 }
 
 fn read_input() -> &'static str {
