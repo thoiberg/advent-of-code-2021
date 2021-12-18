@@ -44,9 +44,10 @@ fn part_one_solution(lines: &Vec<Line>) -> u32 {
 
 fn part_two_solution(lines: &Vec<Line>) -> u32 {
     let mut position_hash: HashMap<String, u32> = HashMap::new();
+    let new_lines = lines.to_vec();
 
-    for line in lines {
-        for point in line.each_point() {
+    for line in new_lines {
+        for point in line {
             let id = format!("{}_{}", point.x, point.y);
 
             match position_hash.get(&id) {
@@ -77,6 +78,7 @@ fn process_input(input: &str) -> Vec<Line> {
             Line {
                 start: Point::new(points[0]),
                 end: Point::new(points[1]),
+                at_start: true,
             }
         })
         .collect()
