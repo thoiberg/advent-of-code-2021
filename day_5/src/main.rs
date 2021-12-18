@@ -9,6 +9,9 @@ fn main() {
 
     let part_one_answer = part_one_solution(&lines);
     println!("Part One Solution is: {}", part_one_answer);
+
+    let part_two_answer = part_two_solution(&lines);
+    println!("Part Two Solution is: {}", part_two_answer);
 }
 
 fn part_one_solution(lines: &Vec<Line>) -> u32 {
@@ -20,6 +23,29 @@ fn part_one_solution(lines: &Vec<Line>) -> u32 {
     let mut position_hash: HashMap<String, u32> = HashMap::new();
 
     for line in valid_lines {
+        for point in line.each_point() {
+            let id = format!("{}_{}", point.x, point.y);
+
+            match position_hash.get(&id) {
+                Some(val) => {
+                    position_hash.insert(id, val + 1);
+                }
+                None => {
+                    position_hash.insert(id, 1);
+                }
+            }
+        }
+    }
+
+    position_hash
+        .into_iter()
+        .fold(0, |acc, (_, value)| if value > 1 { acc + 1 } else { acc })
+}
+
+fn part_two_solution(lines: &Vec<Line>) -> u32 {
+    let mut position_hash: HashMap<String, u32> = HashMap::new();
+
+    for line in lines {
         for point in line.each_point() {
             let id = format!("{}_{}", point.x, point.y);
 
@@ -73,5 +99,10 @@ mod tests {
     #[test]
     fn test_part_one_solution() {
         assert_eq!(part_one_solution(&process_input(read_input())), 5147);
+    }
+
+    #[test]
+    fn test_part_two_solution_example() {
+        assert_eq!(part_two_solution(&test_data()), 12);
     }
 }

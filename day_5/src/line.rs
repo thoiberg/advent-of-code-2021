@@ -44,7 +44,7 @@ impl Line {
                 x: self.start.x,
                 y: value,
             }))
-        } else {
+        } else if self.is_vertical() {
             let range: RangeInclusive<u32>;
 
             if self.start.x < self.end.x {
@@ -56,6 +56,22 @@ impl Line {
             Box::new(range.into_iter().map(|value| Point {
                 x: value,
                 y: self.start.y,
+            }))
+        } else {
+            let range: RangeInclusive<u32>;
+
+            if self.start.y < self.end.y {
+                range = RangeInclusive::new(self.start.y, self.end.y);
+            } else {
+                range = RangeInclusive::new(self.end.y, self.start.y);
+            }
+
+            Box::new(range.into_iter().map(|value| {
+                let diff = value;
+                Point {
+                    x: self.start.x + diff - range.start(),
+                    y: value,
+                }
             }))
         }
     }
