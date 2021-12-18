@@ -15,15 +15,16 @@ fn main() {
 }
 
 fn part_one_solution(lines: &Vec<Line>) -> u32 {
-    let valid_lines: Vec<&Line> = lines
+    let valid_lines: Vec<Line> = lines
         .into_iter()
         .filter(|line| line.is_horizontal() || line.is_vertical())
+        .map(|line| line.clone())
         .collect();
 
     let mut position_hash: HashMap<String, u32> = HashMap::new();
 
     for line in valid_lines {
-        for point in line.each_point() {
+        for point in line {
             let id = format!("{}_{}", point.x, point.y);
 
             match position_hash.get(&id) {

@@ -33,6 +33,8 @@ impl Line {
         self.start.y == self.end.y
     }
 
+    // no longer used but I'm keeping it since it could be a good reference for creating a
+    // simple iterator function.
     pub fn each_point(&self) -> Box<dyn Iterator<Item = Point> + '_> {
         if self.is_horizontal() {
             let range: RangeInclusive<i32>;
@@ -99,25 +101,6 @@ impl Iterator for Line {
             self.at_start = false;
 
             Some(Point { x: new_x, y: new_y })
-            // if self.start.x < self.end.x {
-            //     self.start = Point {
-            //         x: self.start.x + 1,
-            //         y: self.start.y + 1,
-            //     };
-            //     Some(Point {
-            //         x: self.start.x + 1,
-            //         y: self.start.y + 1,
-            //     })
-            // } else {
-            //     self.start = Point {
-            //         x: self.start.x - 1,
-            //         y: self.start.y - 1,
-            //     };
-            //     Some(Point {
-            //         x: self.start.x - 1,
-            //         y: self.start.y - 1,
-            //     })
-            // }
         }
     }
 }
