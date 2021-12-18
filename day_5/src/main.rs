@@ -107,4 +107,9 @@ mod tests {
     fn test_part_two_solution_example() {
         assert_eq!(part_two_solution(&test_data()), 12);
     }
+
+    #[test]
+    fn test_part_two_solution() {
+        assert_eq!(part_two_solution(&process_input(read_input())), 16925);
+    }
 }
