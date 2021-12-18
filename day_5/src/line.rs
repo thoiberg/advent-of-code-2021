@@ -17,6 +17,12 @@ impl Point {
     }
 }
 
+impl PartialEq for Point {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
 #[derive(Clone)]
 pub struct Line {
     pub start: Point,
@@ -72,8 +78,8 @@ impl Line {
             }
 
             Box::new(range.into_iter().map(|value| {
-                let new_x = value + compare(self.start.x, self.end.x);
-                let new_y = value + compare(self.start.y, self.end.y);
+                let new_x = value + offset(self.start.x, self.end.x);
+                let new_y = value + offset(self.start.y, self.end.y);
 
                 Point { x: new_x, y: new_y }
             }))
@@ -84,18 +90,17 @@ impl Line {
 impl Iterator for Line {
     type Item = Point;
 
-    // need to cover use case where the start is higher than the end
-    // need to cover horizontal and vertical requirements
-
     fn next(&mut self) -> Option<Point> {
-        if self.start.x == self.end.x && self.start.y == self.end.y {
+        if self.start == self.end {
             None
         } else if self.at_start {
+            // this is a real gross hack, but I can't figure out how to get the iterator
+            // to iterate over the inclusive range. It either lops off the start or the end
             self.at_start = false;
             Some(self.start.clone())
         } else {
-            let new_x = self.start.x + compare(self.start.x, self.end.x);
-            let new_y = self.start.y + compare(self.start.y, self.end.y);
+            let new_x = self.start.x + offset(self.start.x, self.end.x);
+            let new_y = self.start.y + offset(self.start.y, self.end.y);
 
             self.start = Point { x: new_x, y: new_y };
             self.at_start = false;
@@ -105,7 +110,7 @@ impl Iterator for Line {
     }
 }
 
-fn compare(a: i32, b: i32) -> i32 {
+fn offset(a: i32, b: i32) -> i32 {
     if a == b {
         0
     } else if a < b {
