@@ -12,7 +12,6 @@ fn part_one_solution(initial_state: Vec<u32>, days: u32) -> usize {
         initial_state.len()
     } else {
         let mut new_fish: Vec<u32> = vec![];
-
         let mut next_state: Vec<u32> = initial_state
             .into_iter()
             .map(|timer| match timer {
@@ -28,12 +27,13 @@ fn part_one_solution(initial_state: Vec<u32>, days: u32) -> usize {
 
         part_one_solution(next_state, days - 1)
     }
-    // if days is 0 then return the count of the array
-    // map through the array decrement the values by one
-    // if the value is 0 then return 6 and append an 8 to the array
-    //    (might have to put it into a separate array, and append that to the end once the loop is done)
-    // call return part_one_solution again with the new array and decrement the day counter
-    // 0
+}
+
+fn part_two_solution(initial_state: Vec<u32>, days: u32) -> usize {
+    // store the data in a dict of day -> no of fishes
+    // each day shift the values down an dict key.
+    // With 0, take the number and add it to 6 and 8
+    0
 }
 
 fn process_input(contents: &'static str) -> Vec<u32> {
@@ -64,5 +64,10 @@ mod test {
     #[test]
     fn test_part_one_solution() {
         assert_eq!(part_one_solution(process_input(read_input()), 80), 360268);
+    }
+
+    #[test]
+    fn test_part_two_example() {
+        assert_eq!(part_one_solution(example_data(), 256), 26984457539);
     }
 }
