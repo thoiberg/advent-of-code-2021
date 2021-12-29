@@ -76,12 +76,15 @@ mod test {
 
     #[test]
     fn test_part_one_example() {
-        assert_eq!(part_one_solution(example_data(), 80), 5934);
+        assert_eq!(calculate_fish_population(example_data(), 80), 5934);
     }
 
     #[test]
     fn test_part_one_solution() {
-        assert_eq!(part_one_solution(process_input(read_input()), 80), 360268);
+        assert_eq!(
+            calculate_fish_population(process_input(read_input()), 80),
+            360268
+        );
     }
 
     #[test]
