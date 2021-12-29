@@ -7,4 +7,9 @@ fn main() {
         "Part One Solution is: {}",
         part_one_solution(process_input())
     );
+
+    println!(
+        "Part Two Solution is: {}",
+        part_two_solution(process_input())
+    );
 }
