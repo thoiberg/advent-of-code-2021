@@ -32,4 +32,9 @@ mod tests {
 
         assert_eq!(part_one_solution(data), 37);
     }
+
+    #[test]
+    fn test_part_one_solution() {
+        assert_eq!(part_one_solution(process_input()), 343468);
+    }
 }
